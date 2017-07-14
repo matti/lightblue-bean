@@ -3,7 +3,7 @@ static uint8_t customAdvertData[] = {
   0x02,  // length of this data
   GAP_ADTYPE_FLAGS,
   GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
-  
+
   // two-byte broadcast
   0x03,  // length of this data including the data type byte
   GAP_ADTYPE_MANUFACTURER_SPECIFIC,
@@ -28,6 +28,8 @@ uint8_t expectedPacket[] = {
 
 
 void setup() {
+  Bean.enableConfigSave(false);
+  
   Bean.setCustomAdvertisement(customAdvertData, sizeof(customAdvertData));
   Bean.enableCustom();
   Bean.setAdvertisingInterval(100);
@@ -53,7 +55,7 @@ void loop() {
   if (!isEqual) {
     return;
   }
-  
+
 
   Serial.print("BT lämpötila: ");
   Serial.println(info.advData[6]);

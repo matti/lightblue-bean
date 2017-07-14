@@ -1,5 +1,5 @@
 void setup() {
-  // Serial port is initialized automatically; we don't have to do anything
+  Bean.enableConfigSave(false);
 }
 
 uint8_t expectedPacket[] = {
@@ -35,29 +35,23 @@ void loop() {
   if (!isEqual) {
     return;
   }
-  
 
-  Serial.print("lämpötila: ");
-  Serial.println(info.advData[6]);
-
-  return;
-  
   Serial.print(info.eventType);
   Serial.print(',');
   Serial.print(info.addrType);
   Serial.print(' ');
-  
+
   Serial.print("addr: ");
   for (int i = 0; i < 6; i++) {
     Serial.print(info.addr[i]);
     Serial.print(',');
   }
-  
+
   Serial.print("  advData: ");
   for (int i = 0; i < info.dataLen; i++) {
     Serial.print(info.advData[i], HEX);
     Serial.print(',');
   }
-  
-  Serial.println(); 
+
+  Serial.println();
 }

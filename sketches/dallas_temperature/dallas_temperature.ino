@@ -15,24 +15,33 @@ void setup() {
 
 void loop() {
   int batteryPercentage = Bean.getBatteryLevel();
-    
+  batteryPercentage = batteryPercentage / 10;
+  
   sensors.requestTemperatures();
  
-  double tempBean = Bean.getTemperature(); 
+  float tempBean = Bean.getTemperature();
+  tempBean = tempBean + 2;
   float tempFirst = sensors.getTempCByIndex(0);
   float tempSecond = sensors.getTempCByIndex(1);
+
+  if (tempFirst == -127.0) {
+    tempFirst = 0.0;
+  }
+  if (tempSecond == -127.0) {
+    tempSecond = 0.0;
+  }
 
   char tempBeanChar[4];
   char tempFirstChar[4];
   char tempSecondChar[4];
   
-  String name = "t-";
+  String name = "t/";
   name += batteryPercentage;
-  name += "-";
+  name += "/";
   name += dtostrf(tempBean,4,1,tempBeanChar);
-  name += "-";
+  name += "/";
   name += dtostrf(tempFirst,4,1,tempFirstChar);
-  name += "-";
+  name += "/";
   name += dtostrf(tempSecond,4,1,tempSecondChar);
 
   Serial.println(name);
