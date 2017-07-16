@@ -5,12 +5,25 @@
 OneWire oneWire(ONE_WIRE_BUS); 
 DallasTemperature sensors(&oneWire);
 
-void setup() {
-  Bean.enableConfigSave(false);
-  sensors.begin();
+#define BEAN_MIN_ADVERTISING_INT_MS 20
+// copypaste from bean sources
+// Longest Apple Bluetooth Design Guide Advertising Interval: 1285
+#define BEAN_MAX_ADVERTISING_INT_MS 1285
+#define ONE_OF_APPLE_INTERVALS 760
 
-  Bean.sleep(10000);
-  Bean.setAdvertisingInterval(100);  
+#define BUILD_NUMBER 5
+
+void setup() {
+  // MAYBEFIX: didn't work unless saved in config?
+  //Bean.enableConfigSave(true);
+  //Bean.setAdvertisingInterval(100);
+  //Bean.setAdvertisingInterval(ONE_OF_APPLE_INTERVALS);
+  Bean.setAdvertisingInterval(BEAN_MAX_ADVERTISING_INT_MS);
+
+  Bean.enableConfigSave(false);
+  Bean.sleep(15000);
+  
+  sensors.begin();
 }
 
 void loop() {
@@ -43,11 +56,12 @@ void loop() {
   name += dtostrf(tempFirst,4,1,tempFirstChar);
   name += "/";
   name += dtostrf(tempSecond,4,1,tempSecondChar);
-
+  name += "/";
+  name += BUILD_NUMBER;
+  
   Serial.println(name);
   // 21 chars max?
   Bean.setBeanName(name);
 
-
-  Bean.sleep(5000);
+  Bean.sleep(60000);
 }
