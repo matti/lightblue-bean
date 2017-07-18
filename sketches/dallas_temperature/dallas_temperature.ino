@@ -5,24 +5,28 @@
 OneWire oneWire(ONE_WIRE_BUS); 
 DallasTemperature sensors(&oneWire);
 
+// copypaste from bean sources (can't be higher or lower than MAX and MIN)
+// Longest Apple Bluetooth Design Guide Advertising Interval is also 1285
 #define BEAN_MIN_ADVERTISING_INT_MS 20
-// copypaste from bean sources
-// Longest Apple Bluetooth Design Guide Advertising Interval: 1285
 #define BEAN_MAX_ADVERTISING_INT_MS 1285
-#define ONE_OF_APPLE_INTERVALS 760
 
-#define BUILD_NUMBER 5
+#define BUILD_NUMBER 7
+
+float lastTempBean;
+float lastTempFirst;
+float lastTempSecond;
 
 void setup() {
   // MAYBEFIX: didn't work unless saved in config?
   //Bean.enableConfigSave(true);
-  //Bean.setAdvertisingInterval(100);
-  //Bean.setAdvertisingInterval(ONE_OF_APPLE_INTERVALS);
+  //Bean.setAdvertisingInterval(BEAN_MAX_ADVERTISING_INT_MS);
+  
+  Bean.enableConfigSave(false);
+
+  Bean.sleep(15000);
+
   Bean.setAdvertisingInterval(BEAN_MAX_ADVERTISING_INT_MS);
 
-  Bean.enableConfigSave(false);
-  Bean.sleep(15000);
-  
   sensors.begin();
 }
 
@@ -44,6 +48,15 @@ void loop() {
     tempSecond = 0.0;
   }
 
+  if (
+    tempBean == lastTempBean &&
+    tempFirst == lastTempFirst &&
+    tempSecond == lastTempSecond
+   ) {
+    Bean.sleep(60000);
+    return;
+  }
+
   char tempBeanChar[4];
   char tempFirstChar[4];
   char tempSecondChar[4];
@@ -62,6 +75,9 @@ void loop() {
   Serial.println(name);
   // 21 chars max?
   Bean.setBeanName(name);
-
-  Bean.sleep(60000);
+  
+  Bean.enableAdvertising(true);
+  Bean.sleep(10000);
+  Bean.enableAdvertising(false);
+  Bean.sleep(50000);
 }
