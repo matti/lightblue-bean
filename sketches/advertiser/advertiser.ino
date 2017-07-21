@@ -1,30 +1,55 @@
+// NOTE: If packet is malformed, the last ok packet is used
+
 static uint8_t customAdvertData[] = {
-  // general discoverable mode advertises indefinitely
-  0x02,  // length of this data
-  GAP_ADTYPE_FLAGS,
-  GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
-  
-  // two-byte broadcast
-  0x03,  // length of this data including the data type byte
-  GAP_ADTYPE_MANUFACTURER_SPECIFIC,
-  0xAC,  // arbitrary data so we can make sure this is
-         // the Bean we're looking for
-  0x00
+    2,  // length of this data
+    GAP_ADTYPE_FLAGS,
+    GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,  // general discoverable mode advertises indefinitely
+
+    27,
+    GAP_ADTYPE_MANUFACTURER_SPECIFIC,
+    0,
+    1,   // length: 3 would be here
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25   // length: 27
 };
 
 void setup() {
-  Bean.setCustomAdvertisement(customAdvertData, sizeof(customAdvertData));
-  Bean.enableCustom();
-  Bean.setAdvertisingInterval(100);
+  Bean.enableConfigSave(false);
+  Bean.sleep(10000);
+  
+  Bean.setAdvertisingInterval(1000);
 }
 
 void loop() {
-  uint8_t temperature = Bean.getTemperature();
-  Serial.print("Temp in decimal is: "); Serial.println(temperature);
-  String temperatureHex = String(temperature, HEX);
-  Serial.print("Temp in HEX is: "); Serial.println(temperatureHex);
+//  String temperatureHex = String(temperature, HEX);
+//  Serial.print("Temp in HEX is: "); Serial.println(temperatureHex);
   
-  customAdvertData[6] = temperature;
+  //Bean.setCustomAdvertisement(customAdvertData, sizeof(customAdvertData));
+  customAdvertData[6] = millis();
   Bean.setCustomAdvertisement(customAdvertData, sizeof(customAdvertData));
+  Bean.enableCustom();
+  
   Bean.sleep(1000);
 }
